@@ -61,4 +61,13 @@ class RegistroTrabajoTecnico
             }
         });
     }
+
+    public function cambiarEstado(int $idServicio, Usuario $usuario, array $datos): void
+    {
+        $this->servicios->conServicioAsignado($idServicio, $usuario, function (Servicio $servicio) use ($datos): void {
+            $tieneDiagnostico = Diagnostico::query()->where('id_servicio', $servicio->id_servicio)->exists();
+            EstadoDelServicio::para(EstadoServicio::from($datos['estado']))->establecer($servicio, $tieneDiagnostico);
+            $servicio->save();
+        });
+    }
 }
