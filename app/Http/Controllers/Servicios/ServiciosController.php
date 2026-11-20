@@ -45,4 +45,16 @@ class ServiciosController extends Controller
     {
         return view('servicios.registrado', ['servicio' => $this->servicios->obtener($servicio)]);
     }
+
+    public function asignacion(SolicitudAdministrador $request, int $servicio, RegistroTecnicos $tecnicos): View
+    {
+        return view('servicios.asignar', ['servicio' => $this->servicios->obtener($servicio), 'tecnicos' => $tecnicos->listar()]);
+    }
+
+    public function asignar(AsignarTecnicoRequest $request, int $servicio): RedirectResponse
+    {
+        $this->servicios->asignar($servicio, (int) $request->validated('id_tecnico'));
+
+        return redirect()->route('servicios.ver', $servicio)->with('aviso', 'Técnico asignado. Se conservaron el estado y los registros del servicio.');
+    }
 }

@@ -55,4 +55,17 @@ class GestionServicios
 
         throw ValidationException::withMessages(['registro' => 'No se pudo generar un código único. Intenta guardar nuevamente.']);
     }
+
+    public function asignar(int $idServicio, int $idTecnico): Servicio
+    {
+        $tecnico = $this->tecnicos->obtener($idTecnico);
+
+        return GuardarRegistro::ejecutar(function () use ($idServicio, $tecnico): Servicio {
+            $servicio = Servicio::query()->lockForUpdate()->findOrFail($idServicio);
+            $servicio->id_tecnico = $tecnico->id_tecnico;
+            $servicio->save();
+
+            return $servicio;
+        });
+    }
 }
