@@ -1,0 +1,12 @@
+{
+    "title": "Valtraza | Documentación técnica y guía de uso",
+    "description": "Equipo ValleTech: instalación, uso, arquitectura, seguridad y evidencias de pruebas de Valtraza.",
+    "language": "es",
+    "author": "Equipo ValleTech",
+    "plugins": [
+        "-sharing"
+    ],
+    "styles": {
+        "website": "styles/website.css"
+    }
+}
