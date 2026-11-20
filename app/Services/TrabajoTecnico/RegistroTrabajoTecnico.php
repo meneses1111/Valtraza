@@ -45,4 +45,11 @@ class RegistroTrabajoTecnico
             ]);
         });
     }
+
+    public function registrarTrabajo(int $idServicio, Usuario $usuario, array $datos): void
+    {
+        $this->servicios->conServicioAsignado($idServicio, $usuario, function (Servicio $servicio) use ($datos): void {
+            Trabajo::query()->create([...$datos, 'id_servicio' => $servicio->id_servicio]);
+        });
+    }
 }
