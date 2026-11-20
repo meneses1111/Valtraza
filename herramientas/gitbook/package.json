@@ -1,0 +1,15 @@
+{
+  "name": "valtraza-gitbook",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Generador aislado de documentaci�n de Valtraza",
+  "engines": {
+    "node": ">=24 <27"
+  },
+  "dependencies": {
+    "honkit": "6.2.5"
+  },
+  "devDependencies": {
+    "puppeteer-core": "25.17.0"
+  }
+}
