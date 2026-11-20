@@ -22,7 +22,9 @@ class GestionServicios
 
     public function listar(?string $asignacion, ?string $estado = null, ?int $idTecnico = null): mixed
     {
-        return Servicio::query()->with(['equipo.cliente', 'tecnico'])
+        return Servicio::query()
+            ->select(['id_servicio', 'codigo_servicio', 'nombre', 'id_equipo', 'id_tecnico', 'estado'])
+            ->with(['equipo:id_equipo,id_cliente,codigo_equipo', 'equipo.cliente:id_cliente,nombre', 'tecnico:id_tecnico,nombre'])
             ->when($asignacion === 'sin_tecnico', fn ($consulta) => $consulta->whereNull('id_tecnico'))
             ->when($asignacion === 'con_tecnico', fn ($consulta) => $consulta->whereNotNull('id_tecnico'))
             ->when($estado, fn ($consulta) => $consulta->where('estado', $estado))
@@ -102,7 +104,9 @@ class GestionServicios
     {
         abort_unless($usuario->rol === 'tecnico' && $usuario->id_tecnico !== null, 403);
 
-        return Servicio::query()->with('equipo')
+        return Servicio::query()
+            ->select(['id_servicio', 'codigo_servicio', 'nombre', 'id_equipo', 'fecha', 'estado'])
+            ->with('equipo:id_equipo,codigo_equipo,modelo')
             ->where('id_tecnico', $usuario->id_tecnico)
             ->when($estado, fn ($consulta) => $consulta->where('estado', $estado))
             ->orderByDesc('fecha')->orderByDesc('id_servicio')->paginate(EntradaFormulario::POR_PAGINA)->withQueryString();
