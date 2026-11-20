@@ -35,7 +35,15 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (QueryException $exception, Request $request) {
             $estado = (string) ($exception->errorInfo[0] ?? $exception->getCode());
 
-            if (str_starts_with($estado, '08') || in_array($estado, ['57P01', '57P02', '57P03', '57014', '55P03', '53300'], true)) {
+            if ($estado === '55P03') {
+                $mensaje = 'La operación no pudo obtener acceso al registro. Vuelve a consultar antes de intentarlo de nuevo.';
+
+                return $request->expectsJson()
+                    ? response()->json(['message' => $mensaje], 503, ['Retry-After' => '1'])
+                    : response()->view('errors.503', ['mensajeTemporal' => $mensaje], 503, ['Retry-After' => '1']);
+            }
+
+            if (str_starts_with($estado, '08') || in_array($estado, ['57P01', '57P02', '57P03', '57014', '53300'], true)) {
                 return $request->expectsJson()
                     ? response()->json(['message' => 'Servicio temporalmente no disponible.'], 503, ['Retry-After' => '30'])
                     : response()->view('errors.503', [], 503, ['Retry-After' => '30']);

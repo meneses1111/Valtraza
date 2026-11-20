@@ -103,4 +103,17 @@ class BlindajeHttpTest extends TestCase
         $this->getJson('/_prueba/postgresql-no-disponible')->assertStatus(503)
             ->assertHeader('Retry-After', '30')->assertDontSee('credencial_privada')->assertDontSee('dato_privado');
     }
+
+    public function test_un_registro_ocupado_indica_reintento_sin_confundirlo_con_mantenimiento(): void
+    {
+        Route::get('/_prueba/registro-ocupado', function (): void {
+            $causa = new \PDOException('detalle_privado');
+            $causa->errorInfo = ['55P03', 7, 'detalle_privado'];
+            throw new QueryException('pgsql', 'SELECT dato_privado', [], $causa);
+        });
+
+        $this->get('/_prueba/registro-ocupado')->assertStatus(503)
+            ->assertHeader('Retry-After', '1')->assertSee('Registro temporalmente ocupado')
+            ->assertDontSee('detalle_privado')->assertDontSee('dato_privado');
+    }
 }

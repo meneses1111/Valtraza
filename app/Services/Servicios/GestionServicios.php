@@ -92,6 +92,7 @@ class GestionServicios
         $tecnico = $this->tecnicos->obtener($idTecnico);
 
         return GuardarRegistro::ejecutar(function () use ($idServicio, $tecnico): Servicio {
+            $this->limitarEsperaDeBloqueo();
             $servicio = Servicio::query()->lockForUpdate()->findOrFail($idServicio);
             $servicio->id_tecnico = $tecnico->id_tecnico;
             $servicio->save();
@@ -123,6 +124,7 @@ class GestionServicios
     public function conServicioAsignado(int $idServicio, Usuario $usuario, Closure $operacion): mixed
     {
         return GuardarRegistro::ejecutar(function () use ($idServicio, $usuario, $operacion) {
+            $this->limitarEsperaDeBloqueo();
             $servicio = Servicio::query()->lockForUpdate()->findOrFail($idServicio);
             $actual = Usuario::query()->lockForUpdate()->find($usuario->getAuthIdentifier());
             abort_unless($actual?->activado, 403);
@@ -142,6 +144,11 @@ class GestionServicios
             ->where('id_servicio', '<>', $servicio->id_servicio)
             ->orderByDesc('fecha')->orderByDesc('id_servicio')
             ->paginate(EntradaFormulario::POR_PAGINA, ['*'], 'historial_pagina')->withQueryString();
+    }
+
+    private function limitarEsperaDeBloqueo(): void
+    {
+        DB::statement("SET LOCAL lock_timeout TO '750ms'");
     }
 
     private function comprobarEncargado(Servicio $servicio, Usuario $usuario): void
