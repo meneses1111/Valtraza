@@ -2,6 +2,18 @@
 
 Responsable: Luis Eduardo Ramos Giraldo, responsable de pruebas de software (equipo ValleTech).
 
+## Origen de las pruebas
+
+Los tres ciclos se ejecutaron en el repositorio anterior, [meneses1111/Valtraza-Valletech](https://github.com/meneses1111/Valtraza-Valletech), antes del traslado a este repositorio el 19-11-2026. Por eso los SHA, las Issues y los PR que se citan aquí, en la matriz, en el plan, en el informe y en las evidencias pertenecen a ese repositorio. Los archivos de esta carpeta se trasladaron sin cambios.
+
+| Ciclo | Fechas | Versión ejecutada en el repositorio anterior | Evidencias |
+| --- | --- | --- | --- |
+| 1 | 09-11-2026 | `db1221d` sobre `develop` `1f2f3a2` | `evidencias/ciclo-1` |
+| 2 | 09-11-2026 | `6fc7b13` sobre `develop` `90fa6a2` | `evidencias/ciclo-2` |
+| 3 | 16 y 17-11-2026 | `42d7d07` sobre `develop` `300ed7b`; nueva prueba y regresión en `73b5190`; CP072 con 15 IP en `3644709` | `evidencias/ciclo-3` |
+
+El código funcional de `73b5190` y `3644709` corresponde al commit `fbc047f` de este repositorio. Los cambios posteriores de `develop` (desde `991b446`) aún no se han probado; las pruebas definitivas se harán sobre el despliegue.
+
 ## Versión probada
 
 | Ciclo | Base de `develop` | SHA de `pruebas` ejecutado | Fecha |
@@ -9,7 +21,7 @@ Responsable: Luis Eduardo Ramos Giraldo, responsable de pruebas de software (equ
 | 1 | `1f2f3a2aa4647dfa537b2b40535ebe653b620431` | `db1221d1fdc39e70c906896c4d36a9e03f7ddab3` (código funcional idéntico a la base) | 09-11-2026 |
 | 2 | `90fa6a2e3e9a16ce0ec7acc432bd7283977e460e` (corrección del PR #17) | `6fc7b13ebc29c474b7c02a332b60c588a04107ac` (código funcional idéntico a la base) | 09-11-2026 |
 
-Entorno de los dos ciclos: Windows 10, Laravel Herd 2.1.1 (Nginx + PHP 8.3.36) con HTTPS en `https://valtraza.test`, PostgreSQL 18.6, Chrome 156.0.8078.81 y Firefox 159.0. Todos los datos son ficticios.
+Entorno de los ciclos 1 y 2: Windows 10, Laravel Herd 2.1.1 (Nginx + PHP 8.3.36) con HTTPS en `https://valtraza.test`, PostgreSQL 18.6, Chrome 156.0.8078.81 y Firefox 159.0. En el ciclo 3 se usaron Chrome 157 y Firefox 160 con el mismo entorno. Todos los datos son ficticios.
 
 ## Resumen del ciclo 1
 
@@ -44,6 +56,16 @@ Johan corrigió la Issue #14 y separó los botones de CP070 (Issue #15) en el [P
 - Recorridos en navegador: 224 comprobaciones correctas y 0 fallidas, en Chrome y Firefox a 1366 × 768 y 1920 × 1080. Comprobaciones HTTP: 24 correctas.
 - Las evidencias del ciclo 1 no cambiaron. Las del ciclo 2 están en `pruebas/evidencias/ciclo-2`.
 
+## Resumen del ciclo 3
+
+Johan agregó funciones entre el 12 y el 14-11-2026, así que se volvieron a ejecutar los 79 casos con un plan de pruebas de sistema, integración, aceptación, rendimiento, seguridad y usabilidad.
+
+- Resultado: 79 de 79 casos exitosos. Un caso tuvo incidencia, CP070/U8: la paginación se mostraba en inglés ([#48](https://github.com/meneses1111/Valtraza-Valletech/issues/48), corregida en `73b5190` y verificada).
+- Pruebas automáticas: 408 pruebas y 912 aserciones (92 unitarias y 316 de integración). Recorridos: 224 comprobaciones correctas. Seguridad HTTP: 25 correctas.
+- Aceptación 8/8 y usabilidad 9/9.
+- Rendimiento: consulta simple máxima de 245,4 ms; 15 sesiones simultáneas sin errores; 15 consultas públicas simultáneas desde IP distintas, 15/15 correctas.
+- Plan, informe de ejecución y hojas de aceptación y usabilidad: `pruebas/plan`.
+
 ## Contenido
 
 | Ruta | Contenido |
@@ -55,6 +77,7 @@ Johan corrigió la Issue #14 y separó los botones de CP070 (Issue #15) en el [P
 | `pruebas/recuperacion` | Copia y restauración, interrupción del servidor web y de PostgreSQL. |
 | `pruebas/datos` | Carga de datos ficticios para medir rendimiento. |
 | `pruebas/matriz` | Casos de la matriz (`casos.json`), script de llenado y matriz oficial diligenciada. |
+| `pruebas/plan` | Plan de pruebas, informe de ejecución del ciclo 3 y hojas de aceptación y usabilidad. |
 | `pruebas/evidencias/ciclo-N` | Evidencias nombradas `CPxxx_CN_…`, sin contraseñas ni códigos activos. |
 
 ## Cómo repetir las pruebas
@@ -103,7 +126,8 @@ node --use-system-ca seguridad-http.mjs
 
 - `recorridos.mjs` usa `VALTRAZA_ADMIN_CODIGO` solo la primera vez, para activar al administrador creado por el seeder. Oculta los códigos antes de cada captura.
 - `carga.mjs` necesita `VALTRAZA_CODIGOS` con al menos 15 códigos de seguimiento separados por comas. Se toman de la base de pruebas y no se guardan.
-- `VALTRAZA_CICLO=2` dirige todas las evidencias a `pruebas/evidencias/ciclo-2`.
+- `VALTRAZA_CICLO=N` dirige todas las evidencias a `pruebas/evidencias/ciclo-N`; `VALTRAZA_EVIDENCIAS` permite elegir otra carpeta.
+- `VALTRAZA_IPS_DISTINTAS=1` hace que cada consulta pública simultánea de `carga.mjs` salga de una dirección local distinta (127.0.0.2 en adelante).
 
 ### 3. Copia, restauración y recuperación
 
@@ -129,6 +153,6 @@ El script conserva la hoja, las columnas y los estilos del formato original, ree
 
 ## Límites de las mediciones
 
-- Rendimiento: cliente y servidor en el mismo equipo y una sola IP de origen. La consulta pública admite 30 solicitudes por minuto por IP, por eso la ráfaga simultánea usa una consulta por visitante.
+- Rendimiento: cliente y servidor en el mismo equipo. En los ciclos 1 y 2 la consulta pública admitía 30 solicitudes por minuto por IP. Desde el ciclo 3 admite 10, por eso la ráfaga de 15 consultas públicas se mide con una IP distinta por visitante.
 - Recuperación de la base: se reinició el servicio local de PostgreSQL. La página de error genérica se comprobó con `APP_ENV=production` y `APP_DEBUG=false`; en local aparece la página de depuración de Laravel.
 - La barra «Edit with Herd» que se ve en las capturas pertenece al entorno local de Herd, no a la aplicación.
