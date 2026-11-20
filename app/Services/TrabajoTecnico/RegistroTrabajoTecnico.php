@@ -52,4 +52,13 @@ class RegistroTrabajoTecnico
             Trabajo::query()->create([...$datos, 'id_servicio' => $servicio->id_servicio]);
         });
     }
+
+    public function registrarRepuestos(int $idServicio, Usuario $usuario, array $datos): void
+    {
+        $this->servicios->conServicioAsignado($idServicio, $usuario, function (Servicio $servicio) use ($datos): void {
+            foreach ($datos['repuestos'] as $repuesto) {
+                Repuesto::query()->create([...$repuesto, 'id_servicio' => $servicio->id_servicio]);
+            }
+        });
+    }
 }
