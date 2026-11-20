@@ -34,9 +34,31 @@ class RegistroClientesEquipos
         return $id ? Cliente::query()->find($id) : null;
     }
 
+    public function equipos(int $idCliente): LengthAwarePaginator
+    {
+        return Equipo::query()->where('id_cliente', $idCliente)->withCount('servicios')->orderByDesc('id_equipo')
+            ->paginate(EntradaFormulario::POR_PAGINA, ['*'], 'equipos_pagina')->withQueryString();
+    }
+
     public function buscarPorIdentificacion(?string $identificacion): ?Cliente
     {
         return $identificacion ? Cliente::query()->where('numero_identificacion', $identificacion)->first() : null;
+    }
+
+    public function equipoDelCliente(int $idEquipo, int $idCliente): Equipo
+    {
+        $equipo = $this->seleccionarEquipo($idEquipo, $idCliente);
+
+        if (! $equipo) {
+            throw ValidationException::withMessages(['id_equipo' => 'Selecciona un computador del cliente indicado.']);
+        }
+
+        return $equipo;
+    }
+
+    public function seleccionarEquipo(int $idEquipo, int $idCliente): ?Equipo
+    {
+        return Equipo::query()->where('id_cliente', $idCliente)->find($idEquipo);
     }
 
     public function registrarCliente(array $datos): Cliente
@@ -44,6 +66,15 @@ class RegistroClientesEquipos
         return GuardarRegistro::ejecutar(
             fn () => Cliente::query()->create($datos),
             ['numero_identificacion' => 'Este cliente ya existe. Puedes consultar su ficha.']
+        );
+    }
+
+    public function registrarEquipo(int $idCliente, array $datos): Equipo
+    {
+        $this->obtener($idCliente);
+
+        return GuardarRegistro::ejecutar(
+            fn () => Equipo::query()->create([...$datos, 'id_cliente' => $idCliente])
         );
     }
 }
