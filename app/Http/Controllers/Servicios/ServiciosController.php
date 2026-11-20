@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Http\Controllers\Servicios;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Servicios\AsignarTecnicoRequest;
+use App\Http\Requests\Servicios\RegistrarServicioRequest;
+use App\Http\Requests\Servicios\SeleccionarClienteRequest;
+use App\Http\Requests\SolicitudAdministrador;
+use App\Services\ClientesEquipos\RegistroClientesEquipos;
+use App\Services\Servicios\GestionServicios;
+use App\Services\Tecnicos\RegistroTecnicos;
+use App\Support\EntradaFormulario;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
+
+class ServiciosController extends Controller
+{
+    public function __construct(private GestionServicios $servicios) {}
+
+    public function crear(SeleccionarClienteRequest $request, RegistroClientesEquipos $clientes): View
+    {
+        $idCliente = $request->validated('id_cliente') ?? EntradaFormulario::identificador(old('id_cliente'));
+        $cliente = $clientes->seleccionar($idCliente ? (int) $idCliente : null);
+        $equipos = $cliente ? $clientes->equipos($cliente->id_cliente) : null;
+        $idEquipo = $request->validated('id_equipo') ?? EntradaFormulario::identificador(old('id_equipo'));
+        $equipoElegido = $cliente && $idEquipo ? $clientes->seleccionarEquipo((int) $idEquipo, $cliente->id_cliente) : null;
+
+        return view('servicios.crear', [
+            'clientes' => $clientes->listar(),
+            'cliente' => $cliente,
+            'equipos' => $equipos,
+            'equipoElegido' => $equipoElegido,
+        ]);
+    }
+
+    public function guardar(RegistrarServicioRequest $request): RedirectResponse
+    {
+        $servicio = $this->servicios->registrar($request->validated());
+
+        return redirect()->route('servicios.registrado', $servicio->id_servicio);
+    }
+
+    public function registrado(SolicitudAdministrador $request, int $servicio): View
+    {
+        return view('servicios.registrado', ['servicio' => $this->servicios->obtener($servicio)]);
+    }
+}
