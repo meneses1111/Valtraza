@@ -31,4 +31,18 @@ class RegistroTrabajoTecnico
 
         return compact('servicio', 'historial', 'diagnosticos', 'trabajos', 'repuestos', 'trabajosHistoricos');
     }
+
+    public function registrarDiagnostico(int $idServicio, Usuario $usuario, array $datos): void
+    {
+        $this->servicios->conServicioAsignado($idServicio, $usuario, function (Servicio $servicio) use ($datos): void {
+            $sinFallas = (bool) ($datos['sin_fallas'] ?? false);
+            Diagnostico::query()->create([
+                'id_servicio' => $servicio->id_servicio,
+                'resultado' => $sinFallas ? 'No se encontraron fallas' : $datos['resultado'],
+                'fallas_identificadas' => $sinFallas ? null : ($datos['fallas_identificadas'] ?? null),
+                'pruebas_realizadas' => $datos['pruebas_realizadas'] ?? null,
+                'observaciones' => $datos['observaciones'] ?? null,
+            ]);
+        });
+    }
 }
