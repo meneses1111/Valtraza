@@ -68,4 +68,56 @@ class GestionServicios
             return $servicio;
         });
     }
+
+    public function asignados(Usuario $usuario, ?string $estado): mixed
+    {
+        abort_unless($usuario->rol === 'tecnico' && $usuario->id_tecnico !== null, 403);
+
+        return Servicio::query()->with('equipo')
+            ->where('id_tecnico', $usuario->id_tecnico)
+            ->when($estado, fn ($consulta) => $consulta->where('estado', $estado))
+            ->orderByDesc('fecha')->orderByDesc('id_servicio')->paginate(EntradaFormulario::POR_PAGINA)->withQueryString();
+    }
+
+    public function asignado(int $idServicio, Usuario $usuario): Servicio
+    {
+        $servicio = $this->obtener($idServicio);
+        $this->comprobarEncargado($servicio, $usuario);
+
+        return $servicio;
+    }
+
+    public function conServicioAsignado(int $idServicio, Usuario $usuario, Closure $operacion): mixed
+    {
+        return GuardarRegistro::ejecutar(function () use ($idServicio, $usuario, $operacion) {
+            $servicio = Servicio::query()->lockForUpdate()->findOrFail($idServicio);
+            $actual = Usuario::query()->lockForUpdate()->find($usuario->getAuthIdentifier());
+            abort_unless($actual?->activado, 403);
+            $this->comprobarEncargado($servicio, $actual);
+
+            return $operacion($servicio);
+        });
+    }
+
+    public function historialRelacionado(Servicio $servicio, Usuario $usuario): mixed
+    {
+        $this->comprobarEncargado($servicio, $usuario);
+
+        // RF08: el encargado consulta, en solo lectura, los servicios completados del mismo computador.
+        return Servicio::query()->withCount('trabajos')
+            ->where('id_equipo', $servicio->id_equipo)->where('estado', 'completado')
+            ->where('id_servicio', '<>', $servicio->id_servicio)
+            ->orderByDesc('fecha')->orderByDesc('id_servicio')
+            ->paginate(EntradaFormulario::POR_PAGINA, ['*'], 'historial_pagina')->withQueryString();
+    }
+
+    private function comprobarEncargado(Servicio $servicio, Usuario $usuario): void
+    {
+        abort_unless(
+            $usuario->rol === 'tecnico'
+            && $usuario->id_tecnico !== null
+            && (int) $servicio->id_tecnico === (int) $usuario->id_tecnico,
+            403
+        );
+    }
 }
