@@ -1,12 +1,12 @@
 # Análisis de GitDiagram
 
-## Diagrama público regenerado
+## Diagrama público revisado
 
-[Diagrama interactivo](https://gitdiagram.com/meneses1111/valtraza) · [Exportación Markdown del generador](https://gitdiagram.com/meneses1111/valtraza.md)
+[Diagrama interactivo de Valtraza](https://gitdiagram.com/meneses1111/valtraza)
 
-La vista de referencia se contrastó con la ERS 1.1, el diseño y el código de Valtraza. GitDiagram genera un grafo a partir del árbol, el README y una muestra del código de la rama predeterminada. La primera generación de este repositorio se revisará tras publicar `main`.
+La vista pública del repositorio nuevo se revisó el 21 de noviembre de 2026 contra la ERS 1.1, los talleres de diseño y el código de `main` en `a60d061`. GitDiagram mostraba 21 componentes y 28 conexiones. La interfaz identifica el repositorio y la fecha de generación. La revisión utiliza `a60d061` como referencia del código, dado que la vista pública no muestra el SHA analizado.
 
-El grafo automático puede agrupar responsabilidades u omitir controladores que no entren en su muestra. La tabla y la vista de referencia describen los seis módulos del diseño y permiten comprobar su correspondencia con el grafo.
+El grafo reúne Clientes y equipos y Técnicos en el bloque «Clientes y técnicos», con nodos separados para ambos. También agrupa diagnóstico, trabajo y repuestos en un nodo de persistencia. El diseño y la implementación distinguen seis módulos y ocho modelos de negocio. La vista de referencia mantiene ese nivel de detalle.
 
 ## Responsabilidades y relaciones verificadas
 
@@ -19,7 +19,7 @@ El grafo automático puede agrupar responsabilidades u omitir controladores que 
 | Consulta y seguimiento | `ConsultaPublica` usa `GestionServicios` y `LecturaAvance`; obtiene el computador a través de Servicios y expone un resumen sin datos personales ni detalles técnicos. `SupervisionServicios` proporciona la lectura administrativa completa. |
 | Persistencia | Hay ocho modelos de negocio en PostgreSQL. `Trabajo.tipo` distingue mantenimiento de reparación. El cliente se obtiene por Servicio → Equipo → Cliente. `sessions` es infraestructura de sesión. |
 
-La flecha de dependencia va del consumidor al proveedor. Las seis dependencias directas entre servicios de módulos son Cuentas y acceso → Técnicos; Servicios → Clientes y equipos y Técnicos; Mantenimientos y reparaciones → Servicios; Consulta y seguimiento → Servicios y Mantenimientos y reparaciones. El filtro administrativo de técnicos y la ficha con historial se componen desde controladores. Una flecha de relación Eloquent representa una asociación de datos y no debe confundirse con una llamada entre módulos.
+La flecha de dependencia va del consumidor al proveedor. Cuentas y acceso consulta Técnicos desde el controlador de cuentas. Servicios utiliza Clientes y equipos y Técnicos. Mantenimientos y reparaciones utiliza Servicios. Consulta y seguimiento utiliza Servicios y la lectura de avances de Mantenimientos y reparaciones. El filtro administrativo de técnicos y la ficha con historial se componen desde controladores. Las relaciones Eloquent describen asociaciones entre datos.
 
 La [concordancia de requisitos y diseño](../cierre/concordancia.md) identifica RF01–RF14 y las revisiones de los Talleres 1 y 2. El README del repositorio publica también el mapa de módulos y sus ubicaciones para facilitar el análisis automático. La vista siguiente es la referencia documental revisada; se distingue del resultado generado por GitDiagram.
 

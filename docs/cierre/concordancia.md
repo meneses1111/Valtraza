@@ -1,6 +1,6 @@
 # Concordancia de Valtraza
 
-La referencia funcional es la ERS definitiva 1.1 del 26 de octubre de 2026. Esta revisión del 18 de noviembre relaciona el diseño con las rutas, controladores, servicios y modelos del repositorio. No reemplaza los resultados de Luis ni certifica una ejecución nueva.
+La referencia funcional es la ERS definitiva 1.1 del 26 de octubre de 2026. La revisión del 21 de noviembre contrasta los talleres de diseño con las rutas, los controladores, los servicios y los modelos de `main` en `a60d061`. Las ejecuciones se documentan por versión en [Estado y evidencias](../pruebas/estado-y-evidencias.md).
 
 ## Requisitos funcionales
 
@@ -27,11 +27,11 @@ Las ubicaciones de controladores parten de `app/Http/Controllers` y las de servi
 
 El Taller 1 representa seis módulos conceptuales. La implementación reparte sus operaciones entre varios controladores; la carpeta de un controlador no determina por sí sola la responsabilidad del módulo. `FichaClienteController`, ubicado en Servicios, compone la ficha del cliente con el historial. Los diagramas de módulos, capas, actores y datos responden preguntas distintas y no necesitan tener el mismo número de cajas.
 
-El Taller 1 se revisó el 18 de noviembre para mostrar la supervisión administrativa en Consulta y seguimiento y las seis dependencias directas de consumo. El computador de la consulta pública se obtiene **a través de Servicios**; no existe una llamada directa desde `ConsultaPublica` a `RegistroClientesEquipos`. Supervisión obtiene también el registro de técnicos desde el controlador para su filtro.
+El Taller 1 representa la supervisión en Consulta y seguimiento y las seis dependencias de consumo entre módulos. La creación de cuentas usa el registro de técnicos desde el controlador. Consulta pública obtiene el computador a través de Servicios. El controlador de supervisión consulta el padrón de técnicos para el filtro.
 
 El Taller 2 se revisó para indicar varios controladores por módulo y nombrar al modelo `Trabajo`. Sus cinco capas se conservan. Los códigos se generan durante el registro. Los observers de avances emiten eventos después de confirmar la transacción. La petición que guarda redirige al detalle; las otras pantallas ven los cambios al consultarse de nuevo, sin prometer actualización automática en tiempo real.
 
-En los diseños de datos, la entidad «Mantenimiento y reparación» corresponde al modelo `Trabajo` y la tabla `trabajo`, con el atributo `tipo`. El servicio conserva `id_equipo`; el cliente se obtiene a través del computador. La tabla técnica `sessions` no cambia las ocho entidades del dominio.
+En los diseños de datos, la entidad «Mantenimiento y reparación» corresponde al modelo `Trabajo` y a la tabla `trabajo`, con el atributo `tipo`. El servicio guarda `id_equipo` y obtiene el cliente a través del computador. El dominio conserva ocho entidades. `sessions` pertenece a infraestructura y la vista de validación añade caché compartida en PostgreSQL.
 
 ## Reglas que deben coincidir en todas las entregas
 
@@ -45,9 +45,19 @@ En los diseños de datos, la entidad «Mantenimiento y reparación» corresponde
 
 ## Requisitos no funcionales y evidencia
 
-RNF01 y RNF02 se relacionan con HTTPS, contraseñas y permisos; RNF03 con integridad y recuperación; RNF04 con usabilidad; RNF05 con dos segundos y quince usuarios concurrentes; RNF06 con MVC y documentación; RNF07 y RNF08 con navegadores y resoluciones; RNF09 con disponibilidad y recuperación. Los resultados y sus límites se conservan en [Estado y evidencias](../pruebas/estado-y-evidencias.md). No se trasladan mediciones locales a un servidor público sin verificarlas.
+| ERS | Implementación o verificación |
+| --- | --- |
+| RNF01 | HTTPS, activación con mínimo de ocho caracteres y bcrypt con sal incorporada. |
+| RNF02 | Middleware de autenticación y rol, además de comprobación del técnico asignado en las operaciones del servicio. |
+| RNF03 | Claves y restricciones PostgreSQL, transacciones y procedimiento de copia y restauración en una base aislada. |
+| RNF04 | Navegación por rol, validación de formularios y mensajes en español. |
+| RNF05 | La ERS establece dos segundos para consultas simples y contempla 15 usuarios simultáneos. La prueba académica adicional de 200 solicitudes tuvo picos en Vercel. |
+| RNF06 | Cinco capas del diseño MVC, módulos documentados y verificación de instalación en CI. |
+| RNF07 | Evidencias históricas de Chrome y Firefox. En Vercel se verificaron las pantallas públicas. |
+| RNF08 | Evidencias en 1366 × 768 y 1920 × 1080. La revisión en Vercel cubrió las pantallas públicas en ambas resoluciones. |
+| RNF09 | El reinicio con restauración se comprobó en PostgreSQL local. La recuperación de Neon queda fuera de esa ejecución. |
 
-El cierre oficial del ciclo 3 registra 79/79 casos exitosos y 408 pruebas automáticas con 912 aserciones. Las cifras corresponden a las versiones registradas por Luis. Los cambios locales posteriores de rendimiento o manejo de bloqueos no quedan aceptados por esa evidencia automáticamente.
+El ciclo 3 histórico registra 79/79 casos exitosos y 408 pruebas automáticas con 912 aserciones. En el repositorio nuevo, sobre `a60d061`, la verificación de GitHub Actions ejecutó 409 pruebas con 918 aserciones. La vista previa de Vercel tuvo una comprobación funcional y de rendimiento propia con alcance parcial respecto de la matriz. Consulta [Estado y evidencias](../pruebas/estado-y-evidencias.md).
 
 ## Documentos de referencia
 

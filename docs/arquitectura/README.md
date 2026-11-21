@@ -1,6 +1,6 @@
 # Arquitectura y patrones
 
-Valtraza es un monolito modular con Laravel 12, PHP 8.3 y una sola base PostgreSQL. Nginx recibe la solicitud, `public/index.php` inicia Laravel y las rutas despachan al controlador de cada operación. Un módulo puede tener varios controladores. Blade presenta el resultado, los controladores coordinan la validación y los servicios, y Eloquent conserva los datos.
+Valtraza es un monolito modular con Laravel 12, PHP 8.3 y una sola base PostgreSQL. En el entorno local del diseño, Nginx recibe la solicitud y `public/index.php` inicia Laravel. La vista de validación en Vercel usa un adaptador PHP y PostgreSQL en Neon. Las rutas despachan al controlador de cada operación, Blade presenta el resultado y Eloquent conserva los datos.
 
 | Capa | Ubicación y función |
 | --- | --- |
