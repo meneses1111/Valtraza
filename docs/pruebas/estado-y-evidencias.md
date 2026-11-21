@@ -1,5 +1,19 @@
 # Estado y evidencias
 
+## Verificación del repositorio nuevo y del despliegue
+
+Los tres ciclos originales se conservan con sus SHA y enlaces históricos. El repositorio Valtraza contiene la [matriz, el plan, el informe y las evidencias trasladadas por Luis](https://github.com/meneses1111/Valtraza/tree/a60d0616a14eb434503ec635c890ac4850b4a720/pruebas). GitHub Actions verificó sobre `a60d061` [409 pruebas y 918 aserciones](https://github.com/meneses1111/Valtraza/actions/runs/44663743214) y [la instalación desde cero](https://github.com/meneses1111/Valtraza/actions/runs/44663743063).
+
+La [vista pública de validación en Vercel](https://valtraza-validacion-ee5ltznhd-valletech.vercel.app/) se probó con PostgreSQL en Neon y datos ficticios. Pasaron 52 de 53 comprobaciones funcionales y de protección. El flujo incluyó registro, asignación, trabajo técnico, cierre y consulta por código. Dos rutas de archivos internos devolvieron la portada con HTTP 200 en una comprobación que esperaba 404. La respuesta no contenía los archivos. Pasaron las 12 comprobaciones de pantallas públicas en Chrome y Firefox a 1366 × 768 y 1920 × 1080.
+
+| Escenario de lectura de la portada | Respuestas HTTP 200 | p95 | Máximo |
+| --- | --- | --- | --- |
+| 20 solicitudes consecutivas | 20/20 | 325 ms | 348 ms |
+| 200 solicitudes, hasta 15 concurrentes | 200/200 | 1.952 ms | 3.609 ms |
+| Repetición con las sesiones abiertas | 200/200 | 347 ms | 569 ms |
+
+El primer lote de 200 tuvo 10 respuestas superiores a dos segundos. Las mediciones corresponden a la portada y la revisión en Vercel cubrió solo parte de la matriz. La copia y el reinicio de PostgreSQL se verificaron en un laboratorio local.
+
 Esta página conserva evidencias históricas del repositorio anterior. Los commits, PR y resultados que figuran aquí corresponden a las versiones que se indican para cada ciclo.
 
 Esta página resume las ejecuciones de Luis por versión. La matriz y las evidencias originales conservan el resultado de cada ciclo. Las correcciones posteriores tienen su propio registro.

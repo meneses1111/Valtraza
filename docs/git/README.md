@@ -10,7 +10,7 @@ El repositorio Valtraza utiliza cinco ramas permanentes.
 | `documentacion` | Fuentes editables del GitBook en `docs`. |
 | `gh-pages` | Salida generada del libro, gestionada por GitHub Actions. |
 
-Luis identifica el commit de `develop` que evaluó y entrega su trabajo desde `pruebas` mediante un pull request. Los cambios del libro se revisan en un pull request de `documentacion` a `develop`. Cuando la versión integrada queda aprobada, pasa de `develop` a `main` mediante otro pull request. La opción **Create a merge commit** conserva los commits individuales.
+Luis identifica la versión evaluada y publica su aporte en `pruebas`. En el repositorio nuevo los 19 commits de pruebas se incorporaron a `develop` y a `main` por avance rápido, conservando su autoría. Las fuentes de documentación se preparan y revisan antes de publicarlas desde `main`.
 
 Cada commit reúne un cambio que se puede revisar por separado. Los mensajes se escriben en español y describen el cambio real, por ejemplo, `Agrego los filtros de supervisión`. Antes de subir, revisar los archivos seleccionados, la autoría y las pruebas correspondientes. Las credenciales, el contexto privado y los entregables de Moodle se conservan fuera del repositorio público.
 
