@@ -12,8 +12,8 @@ Después de configurar una base vacía llamada valtraza, se ejecuta `php artisan
 
 | Tabla | Clave y datos principales |
 | --- | --- |
-| cliente | id_cliente; nombre, numero_identificacion único, correo opcional |
-| tecnico | id_tecnico; nombre, numero_identificacion único, correo opcional |
+| cliente | id_cliente; nombre, tipo_identificacion, numero_identificacion único, correo opcional |
+| tecnico | id_tecnico; nombre, tipo_identificacion, numero_identificacion único, correo opcional |
 | usuario | id_usuario; nombre_usuario único, contrasena_hash, sal, rol, codigo_activacion único, activado, id_tecnico opcional y único |
 | equipo | id_equipo; codigo_equipo único, id_cliente, fecha_registro, modelo y otros_datos_tecnicos opcionales |
 | servicio | id_servicio; codigo_servicio y codigo_seguimiento únicos, id_equipo, id_tecnico opcional, fecha, nombre, descripcion_problema y estado |
@@ -26,5 +26,7 @@ Las claves primarias son enteros de identidad. Un cliente tiene varios equipos; 
 El archivo SQL versionado contiene los tipos, longitudes, nulabilidad y restricciones completas. La segunda migración incorpora ocho índices operativos: equipo por cliente; servicio por equipo; diagnóstico, trabajo y repuesto por servicio; servicio por técnico/estado/fecha y por estado/fecha; y el índice parcial de servicios sin técnico. Su creación usa IF NOT EXISTS para admitir índices previamente existentes; el rollback de esa migración retira los índices con esos nombres, incluso si ya existían. No hacer rollback en una base compartida sin revisar su efecto y tener copia.
 
 Una tercera migración añade seis índices compuestos para listados e historial. La cuarta incorpora `sessions`. La quinta, `2026_11_14_000005_indexar_orden_de_servicios`, añade `idx_servicio_fecha_id` e `idx_servicio_tecnico_fecha_id` para el orden de los listados general y por técnico. La migración conserva las filas y, al revertirse, retira esos dos índices. La sexta migración añade `servicio.registrado_en` con la hora de creación y la tabla de historial `cambio_servicio` para asignaciones y cambios de estado. Conserva los registros anteriores sin inventar horas. El historial se vincula al servicio y las pantallas muestran las horas en la zona de Colombia.
+
+La séptima migración añade el tipo de identificación a clientes y técnicos. Los registros anteriores conservan su número y quedan sin tipo hasta su clasificación. La base valida el formato de los registros con tipo asignado.
 
 Las comprobaciones automáticas utilizan la base exclusiva `valtraza_test`. `RefreshDatabase` elimina también los tipos ENUM antes de volver a migrar. `EsquemaTest` comprueba los valores permitidos y el rechazo de valores desconocidos. Ejecuta las pruebas únicamente sobre una base que se pueda recrear. Los casos y ciclos de Luis tienen su propio [registro de resultados](../pruebas/estado-y-evidencias.md).

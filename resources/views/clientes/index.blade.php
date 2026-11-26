@@ -11,7 +11,7 @@
                 </form>
                 <div class="table-responsive"><table class="table align-middle"><thead><tr><th>Nombre</th><th>Identificación</th><th>Ficha</th></tr></thead><tbody>
                     @forelse($clientes as $cliente)
-                        <tr><td>{{ $cliente->nombre }}</td><td>{{ $cliente->numero_identificacion }}</td><td><a href="{{ route('clientes.ver', $cliente->id_cliente) }}">Ver cliente y equipos</a></td></tr>
+                        <tr><td>{{ $cliente->nombre }}</td><td>{{ $cliente->tipo_identificacion?->value }} {{ $cliente->numero_identificacion }}</td><td><a href="{{ route('clientes.ver', $cliente->id_cliente) }}">Ver cliente y equipos</a></td></tr>
                     @empty
                         <tr><td colspan="3" class="text-body-secondary py-4">No se encontraron clientes.</td></tr>
                     @endforelse
@@ -26,6 +26,7 @@
                 @endif
                 <form method="post" action="{{ route('clientes.guardar') }}">@csrf
                     <x-campo nombre="nombre" etiqueta="Nombre *" required maxlength="100" />
+                    <x-tipo-identificacion />
                     <x-campo nombre="numero_identificacion" etiqueta="Número de identificación *" required maxlength="20" autocomplete="off" spellcheck="false" />
                     <x-campo nombre="correo" etiqueta="Correo electrónico (opcional)" tipo="email" maxlength="100" autocomplete="off" autocapitalize="none" spellcheck="false" />
                     <button class="btn btn-primary" type="submit">Registrar cliente</button>

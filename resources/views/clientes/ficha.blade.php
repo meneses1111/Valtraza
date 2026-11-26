@@ -1,7 +1,7 @@
 @extends('layouts.administrador')
 
 @section('contenido')
-    <div class="cabecera-pagina"><div><a href="{{ route('clientes.index') }}">Volver a clientes</a><h1 class="mt-2">{{ $cliente->nombre }}</h1><p class="text-body-secondary">{{ $cliente->numero_identificacion }} · {{ $cliente->correo ?: 'Correo sin registrar' }}</p></div></div>
+    <div class="cabecera-pagina"><div><a href="{{ route('clientes.index') }}">Volver a clientes</a><h1 class="mt-2">{{ $cliente->nombre }}</h1><p class="text-body-secondary">{{ $cliente->tipo_identificacion?->etiqueta() ?? 'Tipo sin registrar' }} · {{ $cliente->numero_identificacion }} · {{ $cliente->correo ?: 'Correo sin registrar' }}</p></div></div>
     <div class="row g-4">
         <section class="col-lg-8" aria-labelledby="equipos-cliente">
             <h2 id="equipos-cliente" class="h4">Computadores e historial</h2>

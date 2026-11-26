@@ -14,7 +14,27 @@ class RegistroClientesTest extends TestCase
 
     private function registrar(array $datos)
     {
-        return $this->actingAs($this->administrador())->from('/clientes')->post('/clientes', $datos);
+        return $this->actingAs($this->administrador())->from('/clientes')->post('/clientes', ['tipo_identificacion' => 'CC', ...$datos]);
+    }
+
+    public function test_el_tipo_es_obligatorio_y_la_cedula_rechaza_letras(): void
+    {
+        $this->registrar(['nombre' => 'Persona ficticia', 'tipo_identificacion' => '', 'numero_identificacion' => '123'])
+            ->assertSessionHasErrors('tipo_identificacion');
+        $this->registrar(['nombre' => 'Persona ficticia', 'numero_identificacion' => 'ABC123'])
+            ->assertSessionHasErrors('numero_identificacion');
+        $this->registrar(['nombre' => 'Persona ficticia', 'tipo_identificacion' => 'XX', 'numero_identificacion' => '123'])
+            ->assertSessionHasErrors('tipo_identificacion');
+
+        $this->assertDatabaseCount('cliente', 0);
+    }
+
+    public function test_un_pasaporte_admite_letras_y_numeros(): void
+    {
+        $this->registrar(['nombre' => 'Persona ficticia', 'tipo_identificacion' => 'PA', 'numero_identificacion' => 'AB0123'])
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('cliente', ['tipo_identificacion' => 'PA', 'numero_identificacion' => 'AB0123']);
     }
 
     public function test_el_administrador_registra_un_cliente_con_nombre_e_identificacion(): void
@@ -79,7 +99,7 @@ class RegistroClientesTest extends TestCase
         $cliente = $this->cliente('Mario Ficticio', '1100200');
 
         $this->followingRedirects()->actingAs($this->administrador())->from('/clientes')
-            ->post('/clientes', ['nombre' => 'Otro Nombre', 'numero_identificacion' => '1100200'])
+            ->post('/clientes', ['tipo_identificacion' => 'CC', 'nombre' => 'Otro Nombre', 'numero_identificacion' => '1100200'])
             ->assertSee('Este cliente ya existe')->assertSee('/clientes/'.$cliente->id_cliente, false);
     }
 

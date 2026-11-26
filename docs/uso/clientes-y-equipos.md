@@ -1,6 +1,6 @@
 # Clientes y equipos
 
-RF04 permite registrar clientes con nombre e identificación obligatorios y correo opcional. La identificación es única. Si ya existe, se muestra un aviso y un enlace a la ficha existente, sin duplicar el registro. Los clientes no tienen cuenta de acceso.
+RF04 permite registrar clientes con nombre e identificación obligatorios y correo opcional. Selecciona el tipo de documento. Cédula de ciudadanía, cédula de extranjería y tarjeta de identidad admiten solo dígitos. El pasaporte admite letras y números. El número sigue siendo único. Si ya existe, se muestra un aviso y un enlace a la ficha existente, sin duplicar el registro. Los clientes no tienen cuenta de acceso.
 
 RF05 permite registrar varios computadores para un cliente existente. La fecha es obligatoria y debe ser válida; el modelo y los otros datos técnicos son opcionales. El sistema genera códigos como EQ-0001 mediante un observer, dentro de la transacción de registro.
 

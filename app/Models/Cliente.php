@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\TipoIdentificacion;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -13,7 +14,12 @@ class Cliente extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['nombre', 'numero_identificacion', 'correo'];
+    protected $fillable = ['nombre', 'tipo_identificacion', 'numero_identificacion', 'correo'];
+
+    protected function casts(): array
+    {
+        return ['tipo_identificacion' => TipoIdentificacion::class];
+    }
 
     public function equipos(): HasMany
     {

@@ -14,7 +14,27 @@ class RegistroTecnicosTest extends TestCase
 
     private function registrar(array $datos)
     {
-        return $this->actingAs($this->administrador())->from('/tecnicos')->post('/tecnicos', $datos);
+        return $this->actingAs($this->administrador())->from('/tecnicos')->post('/tecnicos', ['tipo_identificacion' => 'CC', ...$datos]);
+    }
+
+    public function test_el_tipo_es_obligatorio_y_la_cedula_rechaza_letras(): void
+    {
+        $this->registrar(['nombre' => 'Persona ficticia', 'tipo_identificacion' => '', 'numero_identificacion' => '123'])
+            ->assertSessionHasErrors('tipo_identificacion');
+        $this->registrar(['nombre' => 'Persona ficticia', 'numero_identificacion' => 'ABC123'])
+            ->assertSessionHasErrors('numero_identificacion');
+        $this->registrar(['nombre' => 'Persona ficticia', 'tipo_identificacion' => 'XX', 'numero_identificacion' => '123'])
+            ->assertSessionHasErrors('tipo_identificacion');
+
+        $this->assertDatabaseCount('tecnico', 0);
+    }
+
+    public function test_un_pasaporte_admite_letras_y_numeros(): void
+    {
+        $this->registrar(['nombre' => 'Persona ficticia', 'tipo_identificacion' => 'PA', 'numero_identificacion' => 'AB0123'])
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('tecnico', ['tipo_identificacion' => 'PA', 'numero_identificacion' => 'AB0123']);
     }
 
     public function test_el_administrador_registra_un_tecnico_con_nombre_e_identificacion(): void
