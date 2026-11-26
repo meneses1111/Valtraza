@@ -6,6 +6,6 @@ RF09 permite registrar un resultado de diagnóstico o marcar **No se encontraron
 
 Los registros se agregan al servicio y no se ofrecen operaciones para editarlos o borrarlos. Quitar una fila del formulario de repuestos solo retira una fila todavía no guardada.
 
-RF12 permite cambiar entre pendiente, en curso y completado. Las clases del patrón State aplican el estado seleccionado. La comprobación de diagnóstico se realiza en la lógica de trabajo técnico: completar exige al menos un diagnóstico y no exige una reparación.
+RF12 permite cambiar entre pendiente, en curso y completado. Las clases del patrón State aplican el estado seleccionado. La lógica comprueba que sea el técnico asignado y que exista al menos un diagnóstico y una actividad de mantenimiento o reparación antes de completar.
 
 Las operaciones bloquean la fila del servicio y vuelven a comprobar al encargado dentro de la transacción. Una reasignación impide que el técnico anterior siga guardando información. Los observers notifican los cambios después de confirmar la transacción; las vistas muestran los datos actuales al volver a consultarlos.

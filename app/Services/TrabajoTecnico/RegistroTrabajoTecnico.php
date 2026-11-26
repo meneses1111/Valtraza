@@ -67,10 +67,19 @@ class RegistroTrabajoTecnico
     public function cambiarEstado(int $idServicio, Usuario $usuario, array $datos): void
     {
         $this->servicios->conServicioAsignado($idServicio, $usuario, function (Servicio $servicio) use ($datos): void {
-            $tieneDiagnostico = Diagnostico::query()->where('id_servicio', $servicio->id_servicio)->exists();
             $anterior = EstadoServicio::from($servicio->estado);
             $nuevo = EstadoServicio::from($datos['estado']);
-            EstadoDelServicio::para($nuevo)->establecer($servicio, $tieneDiagnostico);
+
+            if ($anterior === $nuevo) {
+                return;
+            }
+
+            $cerrando = $nuevo === EstadoServicio::Completado;
+            EstadoDelServicio::para($nuevo)->establecer(
+                $servicio,
+                $cerrando && $servicio->diagnosticos()->exists(),
+                $cerrando && $servicio->trabajos()->exists()
+            );
             $servicio->save();
 
             if ($servicio->wasChanged('estado')) {

@@ -24,7 +24,7 @@ class EstadoDelServicioTest extends TestCase
     {
         $this->expectException(ValidationException::class);
 
-        (new Completado)->establecer(new Servicio(['estado' => 'en_curso']), false);
+        (new Completado)->establecer(new Servicio(['estado' => 'en_curso']), false, false);
     }
 
     public function test_completar_sin_diagnostico_conserva_el_estado_anterior(): void
@@ -32,7 +32,7 @@ class EstadoDelServicioTest extends TestCase
         $servicio = new Servicio(['estado' => 'en_curso']);
 
         try {
-            (new Completado)->establecer($servicio, false);
+            (new Completado)->establecer($servicio, false, false);
         } catch (ValidationException) {
         }
 
@@ -42,18 +42,18 @@ class EstadoDelServicioTest extends TestCase
     public function test_el_aviso_de_completar_sin_diagnostico_pide_registrarlo(): void
     {
         try {
-            (new Completado)->establecer(new Servicio(['estado' => 'pendiente']), false);
+            (new Completado)->establecer(new Servicio(['estado' => 'pendiente']), false, false);
             $this->fail('Se permitió completar sin diagnóstico.');
         } catch (ValidationException $excepcion) {
             $this->assertStringContainsString('diagnóstico', $excepcion->errors()['estado'][0]);
         }
     }
 
-    public function test_completar_con_diagnostico_cambia_el_estado(): void
+    public function test_completar_con_diagnostico_y_actividad_cambia_el_estado(): void
     {
         $servicio = new Servicio(['estado' => 'en_curso']);
 
-        (new Completado)->establecer($servicio, true);
+        (new Completado)->establecer($servicio, true, true);
 
         $this->assertSame('completado', $servicio->estado);
     }
@@ -62,7 +62,7 @@ class EstadoDelServicioTest extends TestCase
     {
         $servicio = new Servicio(['estado' => 'pendiente']);
 
-        (new EnCurso)->establecer($servicio, false);
+        (new EnCurso)->establecer($servicio, false, false);
 
         $this->assertSame('en_curso', $servicio->estado);
     }
@@ -71,7 +71,7 @@ class EstadoDelServicioTest extends TestCase
     {
         $servicio = new Servicio(['estado' => 'en_curso']);
 
-        (new Pendiente)->establecer($servicio, false);
+        (new Pendiente)->establecer($servicio, false, false);
 
         $this->assertSame('pendiente', $servicio->estado);
     }

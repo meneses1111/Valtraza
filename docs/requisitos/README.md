@@ -19,7 +19,7 @@ La línea base funcional es la ERS 1.1. Los tres actores son administrador, téc
 | RF13 | Supervisión de todos los servicios por el administrador |
 | RF14 | Consulta pública de un servicio mediante su código de seguimiento |
 
-Completar exige al menos un diagnóstico; no exige una reparación. Un técnico puede atender varios servicios. La reasignación conserva el estado y los registros anteriores, y retira el acceso operativo al técnico anterior. Los registros de avance se agregan al historial; no se ofrecen operaciones para reescribirlos o borrarlos.
+La versión actual exige un diagnóstico y una actividad de mantenimiento o reparación para completar. Un técnico puede atender varios servicios. La reasignación conserva el estado y los registros anteriores, y retira el acceso operativo al técnico anterior. Los registros de avance se agregan al historial; no se ofrecen operaciones para reescribirlos o borrarlos.
 
 | Requisito | Condición que debe verificarse |
 | --- | --- |

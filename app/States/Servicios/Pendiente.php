@@ -6,7 +6,7 @@ use App\Models\Servicio;
 
 class Pendiente extends EstadoDelServicio
 {
-    public function establecer(Servicio $servicio, bool $tieneDiagnostico): void
+    public function establecer(Servicio $servicio, bool $tieneDiagnostico, bool $tieneActividad): void
     {
         $servicio->estado = 'pendiente';
     }

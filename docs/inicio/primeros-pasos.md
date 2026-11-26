@@ -27,7 +27,7 @@ El cliente no necesita este paso: utiliza directamente su código de seguimiento
 3. Entrega al cliente el código de seguimiento y asigna un técnico registrado.
 4. El técnico abre **Mis servicios** y registra el diagnóstico y el trabajo que corresponda.
 5. Si utiliza repuestos, guarda sus nombres y cantidades.
-6. Actualiza el estado. Para completar el servicio debe existir al menos un diagnóstico; una reparación no es obligatoria.
+6. Actualiza el estado. Para completar el servicio guarda al menos un diagnóstico y una actividad de mantenimiento o reparación.
 7. El administrador supervisa el detalle y el cliente consulta el estado y un resumen general.
 
 ## 4. Comprueba los límites

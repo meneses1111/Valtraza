@@ -16,5 +16,5 @@ abstract class EstadoDelServicio
         };
     }
 
-    abstract public function establecer(Servicio $servicio, bool $tieneDiagnostico): void;
+    abstract public function establecer(Servicio $servicio, bool $tieneDiagnostico, bool $tieneActividad): void;
 }

@@ -18,7 +18,7 @@ No. El de activación se consume al definir la contraseña de una cuenta. El de 
 
 ## ¿Se puede completar un servicio sin reparación?
 
-Sí, cuando no es necesaria. Debe existir al menos un diagnóstico; también se permite indicar que no se encontraron fallas.
+Sí. Puedes guardar una actividad de mantenimiento en lugar de una reparación. También debe quedar un diagnóstico, que puede indicar que no se encontraron fallas.
 
 ## ¿Se pierde información al cambiar al técnico?
 

@@ -71,14 +71,36 @@ class EstadoServicioTest extends TestCase
             ->assertSee('No puedes completar el servicio sin registrar al menos un diagnóstico.');
     }
 
-    public function test_completar_con_diagnostico_y_sin_reparacion_es_aceptado(): void
+    public function test_completar_con_solo_diagnostico_es_rechazado(): void
+    {
+        $this->diagnostico($this->servicio);
+
+        $this->cambiar(['estado' => 'completado'])->assertSessionHasErrors([
+            'estado' => 'Registra al menos una actividad de mantenimiento o reparación antes de completar el servicio.',
+        ]);
+        $this->assertSame('pendiente', $this->servicio->fresh()->estado);
+        $this->assertDatabaseCount('cambio_servicio', 0);
+    }
+
+    public function test_un_tecnico_no_asignado_no_puede_completar_aunque_exista_el_avance(): void
+    {
+        $this->diagnostico($this->servicio);
+        $this->trabajo($this->servicio);
+        $ruta = '/mis-servicios/'.$this->servicio->id_servicio.'/estado';
+
+        $this->actingAs($this->cuentaTecnico())->post($ruta, ['estado' => 'completado'])->assertForbidden();
+        $this->assertSame('pendiente', $this->servicio->fresh()->estado);
+    }
+
+    public function test_completar_con_diagnostico_y_mantenimiento_es_aceptado(): void
     {
         $this->diagnostico($this->servicio, 'No se encontraron fallas');
 
+        $this->trabajo($this->servicio);
         $this->cambiar(['estado' => 'completado'])->assertSessionHasNoErrors();
 
         $this->assertSame('completado', $this->servicio->fresh()->estado);
-        $this->assertDatabaseCount('trabajo', 0);
+        $this->assertDatabaseHas('trabajo', ['id_servicio' => $this->servicio->id_servicio, 'tipo' => 'mantenimiento']);
     }
 
     public function test_el_estado_nuevo_se_ve_en_la_supervision(): void
