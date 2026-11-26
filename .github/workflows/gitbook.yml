@@ -80,6 +80,7 @@ jobs:
     needs: libro
     runs-on: ubuntu-latest
     permissions:
+      actions: read
       contents: write
       pages: write
       id-token: write
@@ -129,6 +130,23 @@ jobs:
         with:
           name: github-pages-${{ github.run_attempt }}
           path: _book
+      - name: Esperar a que el archivo para Pages esté disponible
+        if: steps.pages.outputs.activo == 'true'
+        uses: actions/github-script@v8
+        env:
+          PAGES_ARTIFACT: github-pages-${{ github.run_attempt }}
+        with:
+          script: |
+            for (let intento = 0; intento < 12; intento++) {
+              const { data } = await github.rest.actions.listWorkflowRunArtifacts({
+                ...context.repo,
+                run_id: context.runId,
+                per_page: 100
+              });
+              if (data.artifacts.some(archivo => archivo.name === process.env.PAGES_ARTIFACT && !archivo.expired)) return;
+              await new Promise(resolve => setTimeout(resolve, 5000));
+            }
+            core.setFailed('El archivo para GitHub Pages no apareció a tiempo.');
       - name: Desplegar el libro
         if: steps.pages.outputs.activo == 'true'
         id: despliegue
