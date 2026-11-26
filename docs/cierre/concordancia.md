@@ -47,7 +47,7 @@ En los diseños de datos, la entidad «Mantenimiento y reparación» corresponde
 
 | ERS | Implementación o verificación |
 | --- | --- |
-| RNF01 | HTTPS, activación con mínimo de ocho caracteres y bcrypt con sal incorporada. |
+| RNF01 | HTTPS, activación con mínimo de ocho caracteres, al menos una letra, un número y un carácter especial, y bcrypt con sal incorporada. |
 | RNF02 | Middleware de autenticación y rol, además de comprobación del técnico asignado en las operaciones del servicio. |
 | RNF03 | Claves y restricciones PostgreSQL, transacciones y procedimiento de copia y restauración en una base aislada. |
 | RNF04 | Navegación por rol, validación de formularios y mensajes en español. |

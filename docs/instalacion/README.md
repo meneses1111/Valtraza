@@ -39,6 +39,12 @@ Verificar permisos de escritura de `storage` y `bootstrap/cache`. Si hay configu
 
 En una copia sin cambios locales, descargar la versión acordada y registrar su SHA. Conservar `.env` y APP_KEY. Instalar dependencias desde composer.lock, realizar una copia de seguridad y revisar `php artisan migrate:status` antes de ejecutar `php artisan migrate`. No usar `migrate:fresh` sobre datos que deban conservarse.
 
+## Correo de activación y seguimiento
+
+Para enviar los códigos, configura `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD` y `MAIL_FROM_ADDRESS` con los datos de un servidor SMTP y un remitente autorizado. Usa `MAIL_SCHEME=smtps` si el servidor requiere TLS implícito. Configura la URL pública en `APP_URL` para que los enlaces del correo abran la instalación correcta. Guarda las credenciales en el entorno privado y reconstruye la caché de configuración si está habilitada.
+
+Las pruebas automáticas capturan los mensajes en memoria. Verifica la recepción real con una dirección de prueba autorizada antes de habilitar el envío en el entorno de entrega.
+
 ## Preparación del servidor antes de recibir tráfico
 
 Después de instalar dependencias y definir el `.env` definitivo, preparar las cachés con los procesos web detenidos o el tráfico apartado. Esto evita que varios procesos compilen la misma vista durante el arranque, especialmente en Windows.

@@ -16,7 +16,7 @@ Administrador y técnico usan el mismo formulario. El rol de la cuenta determina
 
 Si vas a instalar el sistema, sigue [Instalación y operación](../instalacion/README.md). Cada integrante necesita su propia base PostgreSQL y su `.env` privado. Las credenciales de la base de datos no son las credenciales para ingresar a la página.
 
-Si el sistema ya está instalado, solicita al administrador tu usuario y código de activación. Abre `/activar`, establece y confirma una contraseña de al menos ocho caracteres y después ingresa en `/ingresar`.
+Si el sistema ya está instalado, solicita al administrador tu usuario. Usa el código de activación que recibiste por correo o que te entregó el administrador. Abre `/activar`, establece y confirma una contraseña de al menos ocho caracteres, con una letra, un número y un carácter especial, y después ingresa en `/ingresar`.
 
 El cliente no necesita este paso: utiliza directamente su código de seguimiento.
 

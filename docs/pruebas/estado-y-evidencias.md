@@ -4,7 +4,7 @@
 
 Los tres ciclos originales se conservan con sus SHA y enlaces históricos. El repositorio Valtraza contiene la [matriz, el plan, el informe y las evidencias trasladadas por Luis](https://github.com/meneses1111/Valtraza/tree/a60d0616a14eb434503ec635c890ac4850b4a720/pruebas). GitHub Actions verificó sobre `a60d061` [409 pruebas y 918 aserciones](https://github.com/meneses1111/Valtraza/actions/runs/44663743214) y [la instalación desde cero](https://github.com/meneses1111/Valtraza/actions/runs/44663743063).
 
-La [vista pública de validación en Vercel](https://valtraza-validacion-ee5ltznhd-valletech.vercel.app/) se probó con PostgreSQL en Neon y datos ficticios. Pasaron 52 de 53 comprobaciones funcionales y de protección. El flujo incluyó registro, asignación, trabajo técnico, cierre y consulta por código. Dos rutas de archivos internos devolvieron la portada con HTTP 200 en una comprobación que esperaba 404. La respuesta no contenía los archivos. Pasaron las 12 comprobaciones de pantallas públicas en Chrome y Firefox a 1366 × 768 y 1920 × 1080.
+La [versión de validación original en Vercel](https://valtraza-validacion-ee5ltznhd-valletech.vercel.app/) se probó con PostgreSQL en Neon y datos ficticios. Pasaron 52 de 53 comprobaciones funcionales y de protección. El flujo incluyó registro, asignación, trabajo técnico, cierre y consulta por código. Dos rutas de archivos internos devolvieron la portada con HTTP 200 en una comprobación que esperaba 404. La respuesta no contenía los archivos. Pasaron las 12 comprobaciones de pantallas públicas en Chrome y Firefox a 1366 × 768 y 1920 × 1080.
 
 | Escenario de lectura de la portada | Respuestas HTTP 200 | p95 | Máximo |
 | --- | --- | --- | --- |
