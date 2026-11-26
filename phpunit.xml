@@ -13,5 +13,6 @@
         <env name="SESSION_DRIVER" value="array"/>
         <env name="SESSION_SECURE_COOKIE" value="false"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
+        <env name="MAIL_MAILER" value="array" force="true"/>
     </php>
 </phpunit>

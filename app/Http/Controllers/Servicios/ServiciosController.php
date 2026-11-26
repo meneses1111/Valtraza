@@ -8,6 +8,7 @@ use App\Http\Requests\Servicios\RegistrarServicioRequest;
 use App\Http\Requests\Servicios\SeleccionarClienteRequest;
 use App\Http\Requests\SolicitudAdministrador;
 use App\Services\ClientesEquipos\RegistroClientesEquipos;
+use App\Services\CorreoDeCodigos;
 use App\Services\Servicios\GestionServicios;
 use App\Services\Tecnicos\RegistroTecnicos;
 use App\Support\EntradaFormulario;
@@ -34,11 +35,20 @@ class ServiciosController extends Controller
         ]);
     }
 
-    public function guardar(RegistrarServicioRequest $request): RedirectResponse
+    public function guardar(RegistrarServicioRequest $request, CorreoDeCodigos $correo): RedirectResponse
     {
         $servicio = $this->servicios->registrar($request->validated());
+        $resultado = $correo->seguimiento($servicio->equipo->cliente->correo, $servicio->nombre, $servicio->codigo_seguimiento);
 
-        return redirect()->route('servicios.registrado', $servicio->id_servicio);
+        return redirect()->route('servicios.registrado', $servicio->id_servicio)->with('envio_seguimiento', $resultado);
+    }
+
+    public function reenviar(SolicitudAdministrador $request, int $servicio, CorreoDeCodigos $correo): RedirectResponse
+    {
+        $registro = $this->servicios->obtener($servicio);
+        $resultado = $correo->seguimiento($registro->equipo->cliente->correo, $registro->nombre, $registro->codigo_seguimiento);
+
+        return redirect()->route('servicios.registrado', $servicio)->with('envio_seguimiento', $resultado);
     }
 
     public function registrado(SolicitudAdministrador $request, int $servicio): View

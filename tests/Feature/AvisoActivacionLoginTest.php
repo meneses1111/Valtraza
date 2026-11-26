@@ -15,7 +15,7 @@ class AvisoActivacionLoginTest extends TestCase
     {
         $this->get('/ingresar')->assertOk()
             ->assertSeeText('Si todavía no activas tu cuenta, usa')
-            ->assertSeeText('con el código que te entregó el administrador.')
+            ->assertSeeText('con el código que recibiste por correo o que te entregó el administrador.')
             ->assertSee('href="'.route('activar').'"', false);
     }
 
@@ -45,7 +45,7 @@ class AvisoActivacionLoginTest extends TestCase
         $this->get('/ingresar')->assertOk()
             ->assertSeeText('Usuario o contraseña incorrectos.')
             ->assertSeeText('Si todavía no activas tu cuenta, usa')
-            ->assertSeeText('con el código que te entregó el administrador.')
+            ->assertSeeText('con el código que recibiste por correo o que te entregó el administrador.')
             ->assertSee('href="'.route('activar').'"', false);
     }
 }

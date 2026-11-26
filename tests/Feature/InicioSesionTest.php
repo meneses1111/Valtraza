@@ -246,7 +246,7 @@ class InicioSesionTest extends TestCase
 
         $this->followingRedirects()->from('/ingresar')->post('/ingresar', ['nombre_usuario' => 'pendiente1', 'password' => $this->contrasenaDePrueba])
             ->assertSeeText('Usuario o contraseña incorrectos.')
-            ->assertSeeText('Si todavía no activas tu cuenta, usa Activar mi cuenta con el código que te entregó el administrador.');
+            ->assertSeeText('Si todavía no activas tu cuenta, usa Activar mi cuenta con el código que recibiste por correo o que te entregó el administrador.');
 
         $this->assertGuest();
     }

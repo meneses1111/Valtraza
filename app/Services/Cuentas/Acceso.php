@@ -16,7 +16,7 @@ class Acceso
     public function listarCuentas(): mixed
     {
         return Usuario::query()->select(['id_usuario', 'nombre_usuario', 'rol', 'activado', 'id_tecnico'])
-            ->with('tecnico:id_tecnico,nombre')->orderBy('nombre_usuario')
+            ->with('tecnico:id_tecnico,nombre,correo')->orderBy('nombre_usuario')
             ->paginate(EntradaFormulario::POR_PAGINA, ['*'], 'cuentas_pagina')->withQueryString();
     }
 
@@ -62,11 +62,11 @@ class Acceso
         throw ValidationException::withMessages(['codigo_activacion' => 'No se pudo completar la activación. Intenta nuevamente.']);
     }
 
-    public function crearCuentaTecnico(array $datos): string
+    public function crearCuentaTecnico(array $datos): Usuario
     {
         for ($intento = 0; $intento < 3; $intento++) {
             try {
-                return DB::transaction(function () use ($datos): string {
+                return DB::transaction(function () use ($datos): Usuario {
                     $codigo = Str::random(32);
                     $usuario = new Usuario([
                         'nombre_usuario' => $datos['nombre_usuario'],
@@ -77,7 +77,7 @@ class Acceso
                         'codigo_activacion' => $codigo,
                     ])->save();
 
-                    return $codigo;
+                    return $usuario;
                 }, 3);
             } catch (QueryException $exception) {
                 $estado = $exception->errorInfo[0] ?? null;

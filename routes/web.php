@@ -21,5 +21,7 @@ Route::middleware('auth')->group(function (): void {
     Route::middleware('rol:administrador')->group(function (): void {
         Route::get('/cuentas/nueva', [CuentasController::class, 'crear'])->name('cuentas.crear');
         Route::post('/cuentas', [CuentasController::class, 'guardar'])->name('cuentas.guardar');
+        Route::post('/cuentas/{cuenta}/reenviar', [CuentasController::class, 'reenviar'])
+            ->whereNumber('cuenta')->middleware('throttle:5,1')->name('cuentas.reenviar');
     });
 });

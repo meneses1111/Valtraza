@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CrearCuentaRequest;
 use App\Http\Requests\SolicitudAdministrador;
+use App\Models\Usuario;
+use App\Services\CorreoDeCodigos;
 use App\Services\Cuentas\Acceso;
 use App\Services\Tecnicos\RegistroTecnicos;
 use Illuminate\Http\RedirectResponse;
@@ -16,10 +18,22 @@ class CuentasController extends Controller
         return view('acceso.crear-cuenta', ['tecnicos' => $tecnicos->listar(), 'cuentas' => $acceso->listarCuentas()]);
     }
 
-    public function guardar(CrearCuentaRequest $request, Acceso $acceso): RedirectResponse
+    public function guardar(CrearCuentaRequest $request, Acceso $acceso, CorreoDeCodigos $correo): RedirectResponse
     {
-        $codigo = $acceso->crearCuentaTecnico($request->validated());
+        $cuenta = $acceso->crearCuentaTecnico($request->validated());
+        $resultado = $correo->activacion($cuenta->tecnico->correo, $cuenta->nombre_usuario, $cuenta->codigo_activacion);
 
-        return redirect()->route('cuentas.crear')->with('codigo_activacion', $codigo);
+        return $resultado === null
+            ? redirect()->route('cuentas.crear')->with('codigo_activacion', $cuenta->codigo_activacion)
+            : redirect()->route('cuentas.crear')->with('envio_activacion', $resultado);
+    }
+
+    public function reenviar(SolicitudAdministrador $request, Usuario $cuenta, CorreoDeCodigos $correo): RedirectResponse
+    {
+        abort_if($cuenta->rol !== 'tecnico' || $cuenta->activado || ! $cuenta->tecnico?->correo, 404);
+
+        $resultado = $correo->activacion($cuenta->tecnico->correo, $cuenta->nombre_usuario, $cuenta->codigo_activacion);
+
+        return redirect()->route('cuentas.crear')->with('envio_activacion', $resultado);
     }
 }

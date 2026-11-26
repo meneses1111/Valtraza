@@ -2,12 +2,23 @@
 
 @section('contenido')
 <div class="cabecera-pagina"><div><p class="text-body-secondary mb-1">Administrador</p><h1>Cuentas de acceso</h1></div></div>
-@if(session('codigo_activacion'))<div class="alert alert-success" role="status">Cuenta creada. Entrega este código al técnico: <strong class="codigo-seguimiento">{{ session('codigo_activacion') }}</strong></div>@endif
+@if(session('codigo_activacion'))<div class="alert alert-success" role="status">El técnico no tiene correo registrado. Entrega este código al técnico por un medio privado: <strong class="codigo-seguimiento">{{ session('codigo_activacion') }}</strong></div>@endif
+@if(session('envio_activacion') === true)
+    <div class="alert alert-success" role="status">Se envió el código de activación al correo del técnico.</div>
+@elseif(session('envio_activacion') === false)
+    <div class="alert alert-warning" role="status">La cuenta está registrada, pero el correo no pudo enviarse. Usa Reenviar activación desde la lista.</div>
+@endif
 <div class="row g-4">
     <section class="col-lg-7" aria-labelledby="cuentas-registradas"><div class="card"><div class="card-body">
         <h2 class="h5" id="cuentas-registradas">Cuentas registradas</h2>
-        <div class="table-responsive"><table class="table align-middle"><thead><tr><th>Usuario</th><th>Rol</th><th>Técnico</th><th>Estado</th></tr></thead><tbody>
-            @forelse($cuentas as $cuenta)<tr><td>{{ $cuenta->nombre_usuario }}</td><td>{{ $cuenta->rol === 'administrador' ? 'Administrador' : 'Técnico' }}</td><td>{{ $cuenta->tecnico?->nombre ?: 'No corresponde' }}</td><td><span @class(['badge', 'text-bg-success' => $cuenta->activado, 'text-bg-secondary' => ! $cuenta->activado])>{{ $cuenta->activado ? 'Activa' : 'Pendiente de activar' }}</span></td></tr>@empty<tr><td colspan="4">Todavía no hay cuentas registradas.</td></tr>@endforelse
+        <div class="table-responsive"><table class="table align-middle"><thead><tr><th>Usuario</th><th>Rol</th><th>Técnico</th><th>Estado</th><th>Acción</th></tr></thead><tbody>
+            @forelse($cuentas as $cuenta)<tr><td>{{ $cuenta->nombre_usuario }}</td><td>{{ $cuenta->rol === 'administrador' ? 'Administrador' : 'Técnico' }}</td><td>{{ $cuenta->tecnico?->nombre ?: 'No corresponde' }}</td><td><span @class(['badge', 'text-bg-success' => $cuenta->activado, 'text-bg-secondary' => ! $cuenta->activado])>{{ $cuenta->activado ? 'Activa' : 'Pendiente de activar' }}</span></td><td>
+                @if(! $cuenta->activado && $cuenta->tecnico?->correo)
+                    <form method="post" action="{{ route('cuentas.reenviar', $cuenta->id_usuario) }}">@csrf
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">Reenviar activación</button>
+                    </form>
+                @endif
+            </td></tr>@empty<tr><td colspan="5">Todavía no hay cuentas registradas.</td></tr>@endforelse
         </tbody></table></div>
         {{ $cuentas->links() }}
     </div></div></section>

@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\Models\Usuario;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
+use Symfony\Component\Mailer\Exception\TransportException;
 use Tests\Concerns\DatosDePrueba;
 use Tests\TestCase;
 
@@ -34,12 +36,40 @@ class CuentasTecnicosTest extends TestCase
         $this->assertNull(Usuario::query()->where('nombre_usuario', 'laura')->first()->contrasena_hash);
     }
 
-    public function test_el_codigo_de_activacion_se_muestra_al_administrador(): void
+    public function test_el_codigo_se_muestra_si_el_tecnico_no_tiene_correo(): void
     {
         $tecnico = $this->tecnico();
 
         $this->followingRedirects()->actingAs($this->administrador())->post('/cuentas', ['id_tecnico' => $tecnico->id_tecnico, 'nombre_usuario' => 'laura'])
             ->assertSee('Entrega este código al técnico')->assertSee(Usuario::query()->where('nombre_usuario', 'laura')->first()->codigo_activacion);
+    }
+
+    public function test_envia_la_activacion_al_correo_registrado_y_no_muestra_el_codigo(): void
+    {
+        $tecnico = $this->tecnico();
+        $tecnico->update(['correo' => 'tecnico@example.test']);
+        $this->crear(['id_tecnico' => $tecnico->id_tecnico, 'nombre_usuario' => 'laura'])
+            ->assertSessionHas('envio_activacion', true)->assertSessionMissing('codigo_activacion');
+
+        $cuenta = Usuario::query()->where('nombre_usuario', 'laura')->firstOrFail();
+        $correo = Mail::mailer()->getSymfonyTransport()->messages()->sole()->getOriginalMessage();
+        $this->assertSame('tecnico@example.test', $correo->getTo()[0]->getAddress());
+        $this->assertStringContainsString($cuenta->codigo_activacion, $correo->getTextBody());
+        $this->get('/cuentas/nueva')->assertDontSee($cuenta->codigo_activacion);
+    }
+
+    public function test_un_fallo_de_envio_permite_reenviar_sin_duplicar_la_cuenta(): void
+    {
+        $tecnico = $this->tecnico();
+        $tecnico->update(['correo' => 'tecnico@example.test']);
+        Mail::shouldReceive('raw')->once()->andThrow(new TransportException('No disponible'));
+        Mail::shouldReceive('raw')->once()->andReturnUsing(fn () => new \stdClass);
+
+        $this->crear(['id_tecnico' => $tecnico->id_tecnico, 'nombre_usuario' => 'laura'])
+            ->assertSessionHas('envio_activacion', false);
+        $cuenta = Usuario::query()->where('nombre_usuario', 'laura')->sole();
+        $this->post('/cuentas/'.$cuenta->id_usuario.'/reenviar')->assertSessionHas('envio_activacion', true);
+        $this->assertSame($cuenta->codigo_activacion, $cuenta->fresh()->codigo_activacion);
     }
 
     public function test_el_codigo_generado_activa_la_cuenta_del_tecnico(): void
