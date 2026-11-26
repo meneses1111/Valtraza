@@ -41,7 +41,7 @@ class AccesoTest extends TestCase
     public function test_el_codigo_de_activacion_solo_funciona_una_vez(): void
     {
         Usuario::query()->forceCreate(['nombre_usuario' => 'admin', 'rol' => 'administrador', 'codigo_activacion' => 'ACT-1']);
-        $datos = ['codigo_activacion' => 'ACT-1', 'password' => 'contrasena123', 'password_confirmation' => 'contrasena123'];
+        $datos = ['codigo_activacion' => 'ACT-1', 'password' => 'contrasena123!', 'password_confirmation' => 'contrasena123!'];
 
         $this->post('/activar', $datos)->assertRedirect('/ingresar');
         $this->post('/activar', $datos)->assertSessionHasErrors('codigo_activacion');

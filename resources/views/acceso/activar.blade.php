@@ -2,12 +2,15 @@
 
 @section('contenido')
 <div class="card formulario-centrado"><div class="card-body p-lg-4">
-    <h1 class="h3">Activar cuenta</h1><p class="text-body-secondary">Usa el código que te entregó el administrador y define tu contraseña.</p>
+    <h1 class="h3">Activar cuenta</h1><p class="text-body-secondary">Usa el código que recibiste por correo o que te entregó el administrador y define tu contraseña.</p>
     <form method="post" action="{{ route('activar.guardar') }}">@csrf
         <x-campo nombre="codigo_activacion" etiqueta="Código de activación *" maxlength="64" autocomplete="off" autocapitalize="off" spellcheck="false" required />
         <x-campo nombre="password" etiqueta="Nueva contraseña *" tipo="password" minlength="8" autocomplete="new-password" aria-describedby="reglas-contrasena" required>
             <ul class="reglas-contrasena" id="reglas-contrasena" data-reglas-contrasena aria-live="polite">
                 <li data-regla="longitud">Mínimo 8 caracteres</li>
+                <li data-regla="letra">Al menos una letra</li>
+                <li data-regla="numero">Al menos un número</li>
+                <li data-regla="simbolo">Al menos un carácter especial, como ! o #</li>
                 <li data-regla="coincide">Las dos contraseñas coinciden</li>
             </ul>
         </x-campo>

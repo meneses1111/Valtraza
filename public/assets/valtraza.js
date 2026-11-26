@@ -147,7 +147,10 @@ document.addEventListener('DOMContentLoaded', () => {
             item?.setAttribute('aria-label', `${item.textContent}: ${cumple ? 'cumplido' : 'pendiente'}`);
         };
         const evaluar = () => {
-            marcar('longitud', nueva.value.length >= 8);
+            marcar('longitud', Array.from(nueva.value).length >= 8);
+            marcar('letra', /\p{L}/u.test(nueva.value));
+            marcar('numero', /\p{Nd}/u.test(nueva.value));
+            marcar('simbolo', /[\p{P}\p{S}]/u.test(nueva.value));
             marcar('coincide', nueva.value !== '' && nueva.value === confirmacion.value);
         };
         nueva.addEventListener('input', evaluar);

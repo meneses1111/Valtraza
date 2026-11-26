@@ -21,6 +21,11 @@ class ActivarCuentaRequest extends FormRequest
                     if (str_contains($value, "\0")) {
                         $fail('Escribe una contraseña válida.');
                     }
+
+                    if (! preg_match('/\p{L}/u', $value) || ! preg_match('/\p{Nd}/u', $value)
+                        || ! preg_match('/[\p{P}\p{S}]/u', $value)) {
+                        $fail('La contraseña debe incluir al menos una letra, un número y un carácter especial.');
+                    }
                 },
             ],
         ];
