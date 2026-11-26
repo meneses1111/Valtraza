@@ -2,8 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Models\Cliente;
 use App\Models\Servicio;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Mail;
+use Symfony\Component\Mailer\Exception\TransportException;
 use Tests\Concerns\DatosDePrueba;
 use Tests\TestCase;
 
@@ -53,6 +57,34 @@ class RegistroServiciosTest extends TestCase
 
         $respuesta->assertRedirect('/servicios/'.$servicio->id_servicio.'/registrado');
         $this->get('/servicios/'.$servicio->id_servicio.'/registrado')->assertOk()->assertSee($servicio->codigo_servicio)->assertSee($servicio->codigo_seguimiento);
+    }
+
+    public function test_envia_el_seguimiento_y_muestra_la_hora_real_de_creacion(): void
+    {
+        $datos = $this->datos();
+        Cliente::findOrFail($datos['id_cliente'])->update(['correo' => 'cliente@example.test']);
+        $this->registrar($datos)->assertSessionHas('envio_seguimiento', true);
+
+        $servicio = Servicio::query()->sole();
+        $correo = Mail::mailer()->getSymfonyTransport()->messages()->sole()->getOriginalMessage();
+        $this->assertSame('cliente@example.test', $correo->getTo()[0]->getAddress());
+        $this->assertStringContainsString($servicio->codigo_seguimiento, $correo->getTextBody());
+        $this->assertNotNull($servicio->registrado_en);
+        $hora = Carbon::parse($servicio->registrado_en)->timezone('America/Bogota')->format('d/m/Y H:i:s');
+        $this->get('/servicios/'.$servicio->id_servicio.'/registrado')->assertSee('Registrado en Valtraza')->assertSee($hora);
+    }
+
+    public function test_un_fallo_de_seguimiento_permite_reenviar_el_codigo_del_mismo_servicio(): void
+    {
+        $datos = $this->datos();
+        Cliente::findOrFail($datos['id_cliente'])->update(['correo' => 'cliente@example.test']);
+        Mail::shouldReceive('raw')->once()->andThrow(new TransportException('No disponible'));
+        Mail::shouldReceive('raw')->once()->andReturnUsing(fn () => new \stdClass);
+
+        $this->registrar($datos)->assertSessionHas('envio_seguimiento', false);
+        $servicio = Servicio::query()->sole();
+        $this->post('/servicios/'.$servicio->id_servicio.'/reenviar')->assertSessionHas('envio_seguimiento', true);
+        $this->assertSame($servicio->codigo_seguimiento, Servicio::query()->sole()->codigo_seguimiento);
     }
 
     public function test_el_servicio_recibe_un_codigo_de_servicio_automatico(): void

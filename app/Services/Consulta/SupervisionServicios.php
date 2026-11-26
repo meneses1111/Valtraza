@@ -5,6 +5,7 @@ namespace App\Services\Consulta;
 use App\Models\Usuario;
 use App\Services\Servicios\GestionServicios;
 use App\Services\TrabajoTecnico\LecturaAvance;
+use App\Support\EntradaFormulario;
 
 class SupervisionServicios
 {
@@ -25,9 +26,12 @@ class SupervisionServicios
     {
         abort_unless($usuario->rol === 'administrador', 403);
 
+        $servicio = $this->servicios->obtener($idServicio);
+
         return [
-            'servicio' => $this->servicios->obtener($idServicio),
+            'servicio' => $servicio,
             'avance' => $this->avance->paraAdministrador($usuario, $idServicio),
+            'cambios' => $servicio->cambios()->paginate(EntradaFormulario::POR_PAGINA, ['*'], 'cambios_pagina')->withQueryString(),
         ];
     }
 }

@@ -4,7 +4,7 @@
     <div class="card formulario-centrado comprobante"><div class="card-body p-lg-4">
         <p class="d-none d-print-block fw-semibold mb-1">Valtraza · Comprobante de servicio</p>
         <p class="text-success fw-semibold d-print-none">Servicio registrado correctamente</p><h1 class="h3">{{ $servicio->nombre }}</h1>
-        <dl class="row mt-4"><dt class="col-sm-4">Código del servicio</dt><dd class="col-sm-8">{{ $servicio->codigo_servicio }}</dd><dt class="col-sm-4">Fecha</dt><dd class="col-sm-8">{{ \Illuminate\Support\Carbon::parse($servicio->fecha)->format('d/m/Y') }}</dd><dt class="col-sm-4">Computador</dt><dd class="col-sm-8">{{ $servicio->equipo->codigo_equipo }} · {{ $servicio->equipo->modelo ?: 'Modelo no registrado' }}</dd><dt class="col-sm-4">Estado</dt><dd class="col-sm-8"><x-estado :valor="$servicio->estado" /></dd></dl>
+        <dl class="row mt-4"><dt class="col-sm-4">Código del servicio</dt><dd class="col-sm-8">{{ $servicio->codigo_servicio }}</dd><dt class="col-sm-4">Fecha</dt><dd class="col-sm-8">{{ \Illuminate\Support\Carbon::parse($servicio->fecha)->format('d/m/Y') }}</dd><dt class="col-sm-4">Registrado en Valtraza</dt><dd class="col-sm-8"><x-hora-registro :momento="$servicio->registrado_en" /></dd><dt class="col-sm-4">Computador</dt><dd class="col-sm-8">{{ $servicio->equipo->codigo_equipo }} · {{ $servicio->equipo->modelo ?: 'Modelo no registrado' }}</dd><dt class="col-sm-4">Estado</dt><dd class="col-sm-8"><x-estado :valor="$servicio->estado" /></dd></dl>
         @if(session('envio_seguimiento') === true)
             <p class="alert alert-success d-print-none" role="status">Se envió el código de seguimiento al correo del cliente.</p>
         @elseif(session('envio_seguimiento') === false)

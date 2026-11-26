@@ -23,6 +23,9 @@ class AsignacionTecnicosTest extends TestCase
         $this->asignar($servicio->id_servicio, ['id_tecnico' => $tecnico->id_tecnico])->assertRedirect('/servicios/'.$servicio->id_servicio);
 
         $this->assertSame($tecnico->id_tecnico, $servicio->fresh()->id_tecnico);
+        $cambio = $servicio->cambios()->sole();
+        $this->assertNotNull($cambio->registrado_en);
+        $this->get('/servicios/'.$servicio->id_servicio)->assertSee('Técnico asignado: '.$tecnico->nombre);
     }
 
     public function test_el_servicio_asignado_aparece_entre_los_trabajos_del_tecnico(): void

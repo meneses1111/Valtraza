@@ -9,6 +9,7 @@
         <dl class="row mb-0">
             <dt class="col-sm-3">Computador</dt><dd class="col-sm-9">{{ $servicio->equipo->codigo_equipo }} · {{ $servicio->equipo->modelo ?: 'Modelo no registrado' }}</dd>
             <dt class="col-sm-3">Fecha del servicio</dt><dd class="col-sm-9">{{ \Illuminate\Support\Carbon::parse($servicio->fecha)->format('d/m/Y') }}</dd>
+            <dt class="col-sm-3">Registrado en Valtraza</dt><dd class="col-sm-9"><x-hora-registro :momento="$servicio->registrado_en" /></dd>
             <dt class="col-sm-3">Problema presentado</dt><dd class="col-sm-9 texto-multilinea">{{ $servicio->descripcion_problema }}</dd>
         </dl>
     </div>

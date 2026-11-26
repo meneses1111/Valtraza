@@ -14,18 +14,18 @@
 <div class="tab-content">
     <section class="tab-pane fade show active" id="diagnosticos" role="tabpanel" aria-labelledby="tab-diagnosticos" tabindex="0">
         <div class="d-flex flex-wrap justify-content-between gap-2 mb-3"><h2 class="h5">Diagnósticos registrados</h2>@if(\Illuminate\Support\Facades\Route::has('diagnosticos.crear'))<a class="btn btn-primary btn-sm" href="{{ route('diagnosticos.crear', $servicio->id_servicio) }}">Registrar diagnóstico</a>@endif</div>
-        @forelse($servicio->diagnosticos as $diagnostico)<article class="border rounded p-3 mb-3"><h3 class="h6">{{ \Illuminate\Support\Carbon::parse($diagnostico->fecha_registro)->timezone('America/Bogota')->format('d/m/Y H:i') }}</h3><p class="texto-multilinea">{{ $diagnostico->resultado }}</p>@if($diagnostico->fallas_identificadas)<p class="texto-multilinea"><strong>Fallas identificadas:</strong> {{ $diagnostico->fallas_identificadas }}</p>@endif @if($diagnostico->pruebas_realizadas)<p class="texto-multilinea"><strong>Pruebas realizadas:</strong> {{ $diagnostico->pruebas_realizadas }}</p>@endif @if($diagnostico->observaciones)<p class="texto-multilinea mb-0"><strong>Observaciones:</strong> {{ $diagnostico->observaciones }}</p>@endif</article>
+        @forelse($servicio->diagnosticos as $diagnostico)<article class="border rounded p-3 mb-3"><h3 class="h6"><x-hora-registro :momento="$diagnostico->fecha_registro" /></h3><p class="texto-multilinea">{{ $diagnostico->resultado }}</p>@if($diagnostico->fallas_identificadas)<p class="texto-multilinea"><strong>Fallas identificadas:</strong> {{ $diagnostico->fallas_identificadas }}</p>@endif @if($diagnostico->pruebas_realizadas)<p class="texto-multilinea"><strong>Pruebas realizadas:</strong> {{ $diagnostico->pruebas_realizadas }}</p>@endif @if($diagnostico->observaciones)<p class="texto-multilinea mb-0"><strong>Observaciones:</strong> {{ $diagnostico->observaciones }}</p>@endif</article>
         @empty<p class="text-body-secondary py-3">Todavía no hay diagnósticos registrados.</p>@endforelse
         {{ $diagnosticos->fragment('diagnosticos')->links() }}
     </section>
     <section class="tab-pane fade" id="trabajos" role="tabpanel" aria-labelledby="tab-trabajos" tabindex="0">
         <div class="d-flex flex-wrap justify-content-between gap-2 mb-3"><h2 class="h5">Mantenimientos y reparaciones</h2>@if(\Illuminate\Support\Facades\Route::has('trabajos.crear'))<a class="btn btn-primary btn-sm" href="{{ route('trabajos.crear', $servicio->id_servicio) }}">Registrar actividad</a>@endif</div>
-        @forelse($servicio->trabajos as $trabajo)<article class="border rounded p-3 mb-3"><h3 class="h6">{{ \App\Enums\TipoTrabajo::from($trabajo->tipo)->etiqueta() }}</h3><p class="texto-multilinea">{{ $trabajo->descripcion }}</p>@if($trabajo->observaciones)<p class="texto-multilinea mb-0"><strong>Observaciones:</strong> {{ $trabajo->observaciones }}</p>@endif</article>@empty<p class="text-body-secondary py-3">Todavía no hay actividades registradas.</p>@endforelse
+        @forelse($servicio->trabajos as $trabajo)<article class="border rounded p-3 mb-3"><h3 class="h6">{{ \App\Enums\TipoTrabajo::from($trabajo->tipo)->etiqueta() }}</h3><p class="text-body-secondary small"><x-hora-registro :momento="$trabajo->fecha_registro" /></p><p class="texto-multilinea">{{ $trabajo->descripcion }}</p>@if($trabajo->observaciones)<p class="texto-multilinea mb-0"><strong>Observaciones:</strong> {{ $trabajo->observaciones }}</p>@endif</article>@empty<p class="text-body-secondary py-3">Todavía no hay actividades registradas.</p>@endforelse
         {{ $trabajos->fragment('trabajos')->links() }}
     </section>
     <section class="tab-pane fade" id="repuestos" role="tabpanel" aria-labelledby="tab-repuestos" tabindex="0">
         <div class="d-flex flex-wrap justify-content-between gap-2 mb-3"><h2 class="h5">Repuestos utilizados</h2>@if(\Illuminate\Support\Facades\Route::has('repuestos.crear'))<a class="btn btn-primary btn-sm" href="{{ route('repuestos.crear', $servicio->id_servicio) }}">Registrar repuestos</a>@endif</div>
-        <div class="table-responsive"><table class="table"><thead><tr><th>Nombre</th><th>Cantidad</th><th>Observaciones</th></tr></thead><tbody>@forelse($servicio->repuestos as $repuesto)<tr><td>{{ $repuesto->nombre }}</td><td>{{ $repuesto->cantidad }}</td><td>{{ $repuesto->observacion ?: 'Sin observaciones' }}</td></tr>@empty<tr><td colspan="3">Todavía no hay repuestos registrados.</td></tr>@endforelse</tbody></table></div>
+        <div class="table-responsive"><table class="table"><thead><tr><th>Nombre</th><th>Cantidad</th><th>Observaciones</th><th>Hora de registro</th></tr></thead><tbody>@forelse($servicio->repuestos as $repuesto)<tr><td>{{ $repuesto->nombre }}</td><td>{{ $repuesto->cantidad }}</td><td>{{ $repuesto->observacion ?: 'Sin observaciones' }}</td><td><x-hora-registro :momento="$repuesto->fecha_registro" /></td></tr>@empty<tr><td colspan="4">Todavía no hay repuestos registrados.</td></tr>@endforelse</tbody></table></div>
         {{ $repuestos->fragment('repuestos')->links() }}
     </section>
     <section class="tab-pane fade" id="historial" role="tabpanel" aria-labelledby="tab-historial" tabindex="0">
@@ -36,4 +36,5 @@
     </section>
 </div>
 </div></div>
+    <x-cambios-servicio :cambios="$cambios" />
 @endsection

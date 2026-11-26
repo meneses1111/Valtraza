@@ -31,6 +31,11 @@ class Servicio extends Model
         return $this->hasMany(Diagnostico::class, 'id_servicio', 'id_servicio')->orderBy('id_diagnostico');
     }
 
+    public function cambios(): HasMany
+    {
+        return $this->hasMany(CambioServicio::class, 'id_servicio', 'id_servicio')->orderByDesc('id');
+    }
+
     public function trabajos(): HasMany
     {
         return $this->hasMany(Trabajo::class, 'id_servicio', 'id_servicio')->orderBy('id_trabajo');

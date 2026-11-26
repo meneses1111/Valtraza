@@ -97,6 +97,10 @@ class GestionServicios
             $servicio->id_tecnico = $tecnico->id_tecnico;
             $servicio->save();
 
+            if ($servicio->wasChanged('id_tecnico')) {
+                $servicio->cambios()->create(['descripcion' => 'Técnico asignado: '.$tecnico->nombre]);
+            }
+
             return $servicio;
         });
     }

@@ -35,6 +35,10 @@ class EstadoServicioTest extends TestCase
         $this->cambiar(['estado' => 'en_curso'])->assertRedirect('/mis-servicios/'.$this->servicio->id_servicio);
 
         $this->assertSame('en_curso', $this->servicio->fresh()->estado);
+        $cambio = $this->servicio->cambios()->sole();
+        $this->assertSame('Estado: Pendiente → En curso', $cambio->descripcion);
+        $this->assertNotNull($cambio->registrado_en);
+        $this->get('/mis-servicios/'.$this->servicio->id_servicio)->assertSee($cambio->descripcion);
     }
 
     public function test_sin_elegir_estado_no_se_guarda(): void
@@ -56,6 +60,7 @@ class EstadoServicioTest extends TestCase
         $this->cambiar(['estado' => 'completado'])->assertSessionHasErrors('estado');
 
         $this->assertSame('pendiente', $this->servicio->fresh()->estado);
+        $this->assertDatabaseCount('cambio_servicio', 0);
     }
 
     public function test_el_aviso_de_completar_sin_diagnostico_se_muestra(): void
